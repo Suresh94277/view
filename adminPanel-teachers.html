@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Admin Panel | Student Management System</title>
+
+    <!-- <link rel="stylesheet" href="./assets/css/vendors.bundle.css"> -->
+    <!-- <link href="./assets/css/datatables.bundle.css" rel="stylesheet" type="text/css" /> -->
+    <link href="./assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="./assets/css/vendors.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="./assets/css/custom.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+    <script>
+        WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+  <style>
+    aside.sidebar {
+        position: fixed;
+        left: 0;
+        top: 51px;
+        bottom: 0;
+        width: 200px;
+        background-color: #343a40;
+    }
+    aside.sidebar > ul > li {
+        background-color: unset;
+        color: rgba(255,255,255,.5);
+    }
+    #contentWrapper{
+        margin-left: 200px;
+    }
+    .sidebar .list-group-item {
+        border: none !important;
+        padding-top: 15px ;
+        padding-bottom: 15px ;
+    }
+    form .row:last-child .form-group {
+      margin-bottom: 0;
+    }
+</style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Result Management System</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" 
+      data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" 
+      aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+          <li class="nav-item">
+              <a class="nav-link" href="javascript:;" onclick="logoutMe()">Log out</span></a>
+          </li>
+          </ul>
+      </div>
+  </nav>
+<main>
+    <aside class="sidebar">
+        <ul class="list-group">
+          <li class="list-group-item rounded-0">
+              <a href="adminPanel-students.html" class="text-light">Students</a>
+          </li>
+          <li class="list-group-item rounded-0">
+              <a href="adminPanel-results.html" class="text-light">Results</a>
+          </li>
+          <li class="list-group-item rounded-0 active">
+              <a href="adminPanel-teachers.html" class="text-light">Teachers</a>
+          </li>
+      </ul>
+    </aside>
+
+    <section id="contentWrapper">
+        <div class="wrapper">
+            <div class="right-section-students">
+                <div class="p-3">
+                    <h3 class="float-left">Teachers <small class="fa fa-redo ml-3 refreshTable" title="Refresh table" style="font-size: 14px;"></small></h3>
+                </div>
+
+                <div id="studentTableCon" class="p-3 mt-3">
+                    <table id="teacherTable">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+  <div class="modal fade" id="teacher-edit-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white" id="students-add">Edit Teacher</h5>
+                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <form id="teacher-edit-form">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="teacher-name" class="form-control-label">Name</label>
+                          <input type="text" readonly="" name="name" autocomplete="off" class="form-control" id="teacher-name">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="teacher-role" class="form-control-label">Role</label>
+                        <select name="role" class="form-control" title="Choose" id="teacher-role">
+                          <option value="admin">Admin</option>
+                          <option value="teacher">Teacher</option>
+                          <option value="guest">Guest</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary mr-auto btn-pill" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btn-pill" 
+                onclick="$('#teacher-edit-form').submit()">Save</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="./assets/js/colors.js"></script>
+<script src="./assets/js/vendors.bundle.js"></script>
+<script src="./assets/js/scripts.bundle.js"></script>
+<script src="./assets/js/datatables.bundle.js" type="text/javascript"></script>
+
+<script>
+    $(function(mytoken) {
+        $.get({
+            url: 'http://localhost:5000/api/auth/check',
+            beforeSend(xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer '+ mytoken);
+            }
+        }).then( response => {
+          // console.dir(localStorage.getItem('user'))
+            if(!response.auth || ['admin', 'teacher'].indexOf(response.user.role.toLowerCase()) === -1) {
+                localStorage.removeItem('token');
+                location.href = 'login.html';
+            } else {
+              if(localStorage.getItem('just_login') !== 'true') return;
+              toastr.info('Welcome '+ response.user.name +', to the admin panel.');
+              localStorage.removeItem('just_login');
+            }
+        });
+
+        $('#teacher-role').selectpicker({width: '100%'});
+
+        $('#teacher-edit-form').off('submit').on('submit', function(e) {
+          e.preventDefault();
+          const form = $(this);
+          $.post({
+                url: 'http://localhost:5000/api/teachers/update/'+ form.attr('data-id'), 
+                data: form.serializeArray(),
+                beforeSend(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer '+ mytoken);
+                }
+            })
+            .then(response => {
+                toastr.success('Teacher updated successfully.');
+                $('.modal.show').modal('hide');
+                form.resetForm();
+                reloadTeachers();
+            }, err => {
+                toastr.error('Something went wrong.');
+            });
+        });
+
+    }( localStorage.getItem('token') ))
+</script>
+<script src="./assets/js/teachers.js"></script>
+
+</body>
+</html>

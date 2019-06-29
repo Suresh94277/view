@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Admin Panel | Student Management System</title>
+
+    <!-- <link rel="stylesheet" href="./assets/css/vendors.bundle.css"> -->
+    <!-- <link href="./assets/css/datatables.bundle.css" rel="stylesheet" type="text/css" /> -->
+    <link href="./assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="./assets/css/vendors.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="./assets/css/custom.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+    <script>
+        WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+  <style>
+    aside.sidebar {
+        position: fixed;
+        left: 0;
+        top: 51px;
+        bottom: 0;
+        width: 200px;
+        background-color: #343a40;
+    }
+    aside.sidebar > ul > li {
+        background-color: unset;
+        color: rgba(255,255,255,.5);
+    }
+    #contentWrapper{
+        margin-left: 200px;
+    }
+    .sidebar .list-group-item {
+        border: none !important;
+        padding-top: 15px ;
+        padding-bottom: 15px ;
+    }
+    form .row:last-child .form-group {
+      margin-bottom: 0;
+    }
+</style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Result Management System</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" 
+      data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" 
+      aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+          <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+          <li class="nav-item">
+              <a class="nav-link" href="javascript:;" onclick="logoutMe()">Log out</span></a>
+          </li>
+          </ul>
+      </div>
+  </nav>
+<main>
+    <aside class="sidebar">
+        <ul class="list-group">
+          <li class="list-group-item rounded-0">
+              <a href="adminPanel-students.html" class="text-light">Students</a>
+          </li>
+          <li class="list-group-item rounded-0 active">
+              <a href="adminPanel-results.html" class="text-light">Results</a>
+          </li>
+          <li class="list-group-item rounded-0">
+              <a href="adminPanel-teachers.html" class="text-light">Teachers</a>
+          </li>
+      </ul>
+    </aside>
+
+    <section id="contentWrapper">
+        <div class="wrapper">
+            <div class="right-section-students">
+                <div class="p-3">
+                    <h3 class="float-left">Results <small class="fa fa-redo ml-3 refreshTable" title="Refresh table" style="font-size: 14px;"></small></h3>
+                    <button type="button" data-toggle="modal" data-target="#result-add-modal"
+                    class="btn btn-primary m-btn float-right btn-sm">Add Result</button>
+                </div>
+
+                <div id="studentTableCon" class="p-3 mt-3">
+                    <div class="kt-portlet">
+                        <div class="kt-portlet__body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">Date</div>
+                                        </div>
+                                        <input type="text" class="form-control" id="exam-date">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">Term</div>
+                                        </div>
+                                        <select class="form-control" id="exam-term">
+                                            <option value="">Choose</option>
+                                            <option value="First Term">First Term</option>
+                                            <option value="Second Term">Second Term</option>
+                                            <option value="Third Term">Third Term</option>
+                                            <option value="Final Term">Final Term</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">Class</div>
+                                        </div>
+                                        <select class="form-control" id="exam-class">
+                                            <option value="">Choose</option>
+                                            <option value="Nursery">Nursery</option>
+                                            <option value="LKG">LKG</option>
+                                            <option value="UKG">UKG</option>
+                                            <option value="One">One</option>
+                                            <option value="Two">Two</option>
+                                            <option value="Three">Three</option>
+                                            <option value="Four">Four</option>
+                                            <option value="Five">Five</option>
+                                            <option value="Six">Six</option>
+                                            <option value="Seven">Seven</option>
+                                            <option value="Eight">Eight</option>
+                                            <option value="Nine">Nine</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">Name</div>
+                                        </div>
+                                        <input type="text" name="name" id="exam-student-name" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table id="resultTable">
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+  <div class="modal fade" id="result-add-modal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white" id="students-add">Create Result</h5>
+                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <form id="result-create-form">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                          <label for="result-standard" class="form-control-label">Class:</label>
+                          <select name="standard" autocomplete="off" class="form-control" id="result-standard"></select>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                          <label for="result-student-id" class="form-control-label">Student:</label>
+                          <select name="student_id" class="form-control" id="result-student-id" title="Choose"></select>
+                      </div>
+                    </div>
+                    <div class="col-md-4 studentinfo">
+                      <div class="form-group">
+                          <label for="result-student--id" class="form-control-label">Student ID:</label>
+                          <input type="text" readonly="" name="student[id]" class="form-control" id="result-student--id">
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="row studentinfo">
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label for="student-dob" class="form-control-label">Date of Birth:</label>
+                        <input readonly="" type="text" name="student[dob]" autocomplete="off" class="form-control" id="student-dob">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="student-parent-name" class="form-control-label">Parent Name:</label>
+                        <input readonly="" type="text" name="student[parent_name]" autocomplete="off" class="form-control" id="student-parent-name">
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="student-parent-phone" class="form-control-label">Parent Phone:</label>
+                        <input readonly="" type="text" name="student[parent_phone]" autocomplete="off" class="form-control" id="student-parent-phone">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-4">
+                          <div class="form-group">
+                              <label for="results-exam-date" class="form-control-label">Exam Date:</label>
+                              <input type="text" class="form-control" name="date" autocomplete="off" id="results-exam-date">
+                          </div>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="form-group">
+                              <label for="results-exam-title" class="form-control-label">Exam Title:</label>
+                              <select class="form-control" name="term" id="results-exam-title">
+                                  <option value="First Term">First Term</option>
+                                  <option value="Second Term">Second Term</option>
+                                  <option value="Third Term">Third Term</option>
+                                  <option value="Final Term">Final Term</option>
+                              </select>
+                          </div>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="form-group">
+                              <label for="results-serial-number" class="form-control-label">Serial Number#:</label>
+                              <input type="text" class="form-control" name="serial_number" autocomplete="off" id="results-serial-number">
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                        <div class="col-md-12 studentinfo">
+                            <style>
+                                table.score-table th{
+                                    text-align: center;
+                                }
+                                table.score-table tr:last-child th {
+                                    text-align: center;
+                                }
+                                table.score-table th {
+                                    vertical-align: middle;
+                                }
+                                table.score-table td {
+                                    text-align: center;
+                                    vertical-align: middle;
+                                }
+                            </style>
+                            <h3>
+                                Scores
+                            </h3>
+                            <table id="prime" class="table table-bordered table-strike score-table">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th style="width:200px;">Subject</th>
+                                        <th>Full Marks</th>
+                                        <th>Pass Marks</th>
+                                        <th>Obtained Marks</th>
+                                        <th>Total</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-secondary">
+                                    <tr data-row="1">
+                                        <td><select name="subjects[subject][]" class="result-subject form-control" title="Choose subject">
+                                            
+                                        </select></td>
+                                        <td>100 <input type="hidden" name="subjects[full_marks][]" value="100"></td>
+                                        <td>40 <input type="hidden" name="subjects[pass_marks][]" value="40"></td>
+                                        <td><input type="text" name="subjects[obtained_marks][]" class="form-control" style="width: 80px;"></td>
+                                        <td><input type="text" name="subjects[total_marks][]" class="form-control" style="width: 80px;"></td>
+                                        <td><textarea name="subjects[remarks][]" class="form-control" rows="1"></textarea></td>
+
+                                    </tr>
+                                
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td class="text-left">
+                                            <button type="button" class="btn btn-sm btn-accent" id="result-add-subject">
+                                                <i class="fa fa-plus"></i> Add Subject
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <span class="subject_total">100</span>
+                                        </td>
+                                        <td>
+                                            <span class="pass_total">40</span>
+                                        </td>
+                                        <td>
+                                            <span class="obtained_total">0</span>
+                                        </td>
+                                        <td>
+                                            <span class="total_total">0</span>
+                                        </td>
+                                        <td>
+                                            <span class="obtained_percentage"></span>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary mr-auto btn-pill" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btn-pill" 
+                onclick="$('#result-create-form').submit()">Save Result</button>
+            </div>
+        </div>
+    </div>
+  </div>
+  
+
+
+  <div class="modal fade" id="result-edit-modal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title text-white" id="result_edit">Edit Result</h5>
+                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body bg-light">
+                <form id="result-edit-form">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                          <label for="edit-result-standard" class="form-control-label">Class:</label>
+                          <input type="text" id="edit-result-standard" readonly="" class="form-control" name="standard">
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                          <label for="edit-result-student-id" class="form-control-label">Student:</label>
+                          <input type="text" name="student_id" readonly="" class="form-control" id="edit-result-student-id">
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                          <label for="edit-result-student--id" class="form-control-label">Student ID:</label>
+                          <input type="text" readonly="" name="student[id]" class="form-control" id="edit-result-student--id">
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="row">
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label for="edit-student-dob" class="form-control-label">Date of Birth:</label>
+                        <input readonly="" type="text" name="student[dob]" autocomplete="off" class="form-control" id="edit-student-dob">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="edit-student-parent-name" class="form-control-label">Parent Name:</label>
+                        <input readonly="" type="text" name="student[parent_name]" autocomplete="off" class="form-control" id="edit-student-parent-name">
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="edit-student-parent-phone" class="form-control-label">Parent Phone:</label>
+                        <input readonly="" type="text" name="student[parent_phone]" autocomplete="off" class="form-control" id="edit-student-parent-phone">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-4">
+                          <div class="form-group">
+                              <label for="edit-results-exam-date" class="form-control-label">Exam Date:</label>
+                              <input type="text" readonly="" class="form-control" name="date" autocomplete="off" id="edit-results-exam-date1">
+                          </div>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="form-group">
+                              <label for="edit-results-exam-title" class="form-control-label">Exam Title:</label>
+                              <input type="text" readonly="" class="form-control" name="term" id="edit-results-exam-title">
+                          </div>
+                      </div>
+                      <div class="col-md-4">
+                          <div class="form-group">
+                              <label for="edit-results-serial-number" class="form-control-label">Serial Number#:</label>
+                              <input type="text" readonly="" class="form-control" name="serial_number" autocomplete="off" id="edit-results-serial-number">
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                        <div class="col-md-12">
+                            <style>
+                                table.score-table th{
+                                    text-align: center;
+                                }
+                                table.score-table tr:last-child th {
+                                    text-align: center;
+                                }
+                                table.score-table th {
+                                    vertical-align: middle;
+                                }
+                                table.score-table td {
+                                    text-align: center;
+                                    vertical-align: middle;
+                                }
+                            </style>
+                            <h3>
+                                Scores
+                            </h3>
+                            <table id="prime1" class="table table-bordered table-strike score-table">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th style="width:200px;">Subject</th>
+                                        <th>Full Marks</th>
+                                        <th>Pass Marks</th>
+                                        <th>Obtained Marks</th>
+                                        <th>Total</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-secondary">
+                                    
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td class="text-left">
+                                            <button type="button" class="btn btn-sm btn-accent" id="result-add-subject">
+                                                <i class="fa fa-plus"></i> Add Subject
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <span class="subject_total">100</span>
+                                        </td>
+                                        <td>
+                                            <span class="pass_total">40</span>
+                                        </td>
+                                        <td>
+                                            <span class="obtained_total">0</span>
+                                        </td>
+                                        <td>
+                                            <span class="total_total">0</span>
+                                        </td>
+                                        <td>
+                                            <span class="obtained_percentage"></span>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary mr-auto btn-pill" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btn-pill" 
+                onclick="$('#result-edit-form').submit()">Save Result</button>
+            </div>
+        </div>
+    </div>
+  </div>
+  
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="./assets/js/colors.js"></script>
+<script src="./assets/js/vendors.bundle.js"></script>
+<script src="./assets/js/scripts.bundle.js"></script>
+<script src="./assets/js/datatables.bundle.js" type="text/javascript"></script>
+
+<script>
+    $(function(mytoken) {
+        $.get({
+            url: 'http://localhost:5000/api/auth/check',
+            beforeSend(xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer '+ mytoken);
+            }
+        }).then( response => {
+            if(!response.auth || ['admin', 'teacher'].indexOf(response.user.role.toLowerCase()) === -1) {
+                localStorage.removeItem('token');
+                location.href = 'login.html';
+            } else {
+                if(localStorage.getItem('just_login') !== 'true') return;
+                toastr.info('Welcome '+ response.user.name +', to the admin panel.');
+                localStorage.removeItem('just_login');
+            }
+        });
+
+
+        $('#results-exam-date').datepicker({
+          format: 'mm/dd/yyyy',
+          autoclose:true
+        });
+
+        $('#result-student-id').selectpicker({width: '100%'}).on('change', function(e) {
+            $.get('http://localhost:5000/api/students/findById/'+ this.value)
+            .then(student => {
+                for(let [name, value] of Object.entries(student)) {
+                    if(name === 'dob') {
+                        value = moment(value).format('MM/DD/YYYY');
+                    }
+                    $('input[name="student['+ name +']"]').val(value);
+                }
+                $('.studentinfo').removeClass('studentinfo');
+            });
+        });
+
+        $('#result-standard, #result-edit-standard').selectpicker({
+          width: '100%'
+        }).on('change', function(e) {
+            $.get('http://localhost:5000/api/students/findByClass/'+ this.value)
+            .then(list => {
+                list  = list.map(x => `<option value="${x._id}">${[x.fname, x.mname, x.lname].join(' ')}</option>`);
+                $('#result-student-id').html(list).selectpicker('refresh');
+            });
+        });
+        $.get('http://localhost:5000/api/classes/list').then(list => {
+            list = list.map(x => `<option value="${x.id}">${x.text}</option>`);
+            $('#result-standard, #student-edit-class').html(list).selectpicker('refresh');
+
+            $.get('http://localhost:5000/api/students/findByClass/Nursery')
+            .then(list => {
+                list  = list.map(x => `<option value="${x._id}">${[x.fname, x.mname, x.lname].join(' ')}</option>`);
+                $('#result-student-id').html(list).selectpicker('refresh');
+            });
+        });
+
+        $('#results-exam-title').selectpicker({width: '100%'});
+        // initSubject();
+
+        $('#result-add-subject').off('click').on('click', function(e) {
+            e.preventDefault();
+            const tableBody = $('table#prime tbody');
+            const rowNumber = tableBody.children().length + 1;
+            const newRow = `<tr data-row="${rowNumber}">
+                                            <td><select name="subjects[subject][]" class="result-subject form-control" title="Choose subject">
+                                                
+                                            </select></td>
+                                            <td>100 <input type="hidden" name="subjects[full_marks][]" value="100"></td>
+                                        <td>40 <input type="hidden" name="subjects[pass_marks][]" value="40"></td>
+                                            <td><input type="text" name="subjects[obtained_marks][]" class="form-control" style="width: 80px;"></td>
+                                            <td><input type="text" name="subjects[total_marks][]" class="form-control" style="width: 80px;"></td>
+                                            <td><textarea name="subjects[remarks][]" class="form-control" rows="1"></textarea></td>
+                                        </tr>`;
+            tableBody.append(newRow);
+            initSubject(rowNumber);
+            calcTotal();
+        });
+
+
+        function initSubject(rowNumber)
+        {
+            const tableBody = $('table#prime tbody');
+            const selectElement = document.createElement('select');
+            selectElement.innerHTML = tableBody.find('tr:first select.result-subject').html();
+            selectElement.options[0].remove();
+            tableBody.find('tr[data-row="'+ rowNumber +'"] select.result-subject')
+            .html($(selectElement).html())
+            .selectpicker({width: '100%'}).selectpicker('val', '');
+        }
+
+        $('select.result-subject').selectpicker({width: '100%'});
+        $.get('http://localhost:5000/api/classes/subjects').then(list => {
+            list = list.map(x => `<option value="${x}">${x}</option>`);
+            $('select.result-subject').html(list).selectpicker('refresh');
+        });
+
+        $('#result-create-form').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            const form = $(this);
+            $.post({
+                url: 'http://localhost:5000/api/results/create', 
+                data: form.serializeArray(),
+                beforeSend(xhr) {
+                    const token = localStorage.getItem('token');
+                    xhr.setRequestHeader('Authorization', 'Bearer '+ token);
+                }
+            })
+            .then(response => {
+                toastr.success('Result created successfully.');
+                $('.modal.show').modal('hide');
+                form.resetForm();
+                reloadResults();
+            }, err => {
+                toastr.error('Something went wrong.');
+            });
+        });
+        $('#result-edit-form').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            const form = $(this);
+            $.post({
+                url: 'http://localhost:5000/api/results/update/'+ form.attr('data-id'), 
+                data: form.serializeArray(),
+                beforeSend(xhr) {
+                    const token = localStorage.getItem('token');
+                    xhr.setRequestHeader('Authorization', 'Bearer '+ token);
+                }
+            })
+            .then(response => {
+                toastr.success('Result updated successfully.');
+                $('.modal.show').modal('hide');
+                form.resetForm();
+                reloadResults();
+            }, err => {
+                toastr.error('Something went wrong.');
+            });
+        });
+
+    }( localStorage.getItem('token') ))
+
+</script>
+<script src="./assets/js/results.js"></script>
+
+</body>
+</html>

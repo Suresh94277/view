@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Student Management System</title>
+
+    <link rel="stylesheet" href="./assets/css/vendors.bundle.css">
+    <!-- <link href="./assets/css/datatables.bundle.css" rel="stylesheet" type="text/css" /> -->
+    <link href="./assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+    <script>
+        WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+        });
+
+    </script>
+    <style>
+      .infodob {
+          display: none;
+        }
+        table#prime1 {
+            display: none;
+        }
+        .user-det {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    
+  <main class="container pt-4" id="content-wrapper">
+    <div class="row justify-content-center">
+      <div class="col-sm-12 col-md-7 col-lg-6">
+        <div class="alert alert-danger d-none">
+            <span></span>
+        </div>
+        <form action="javascript:;" method="post" id="result-check-form">
+          <h3>Student Result Management System</h3>
+          <hr>
+          <div class="row">
+            <div class="col-md-8">
+              <div class="form-group">
+                <label>Serial Number <span class="text-muted">&nbsp; e.g. 1000465656</span></label>
+                <input type="text" placeholder="********" name="serial_num" class="form-control" autofocus>
+              </div>
+              <div class="form-group infodob">
+                <label>Date of birth<span class="text-muted">&nbsp; e.g. 1995-10-05</span></label>
+                <input autocomplete="off" type="text" placeholder="YYYY-MM-DD" name="dob" class="form-control" autofocus>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="">&nbsp;</label>
+                <button class="btn btn-primary btn-block">Check</button>
+              </div>
+              <div class="form-group infodob">
+                <label for="">&nbsp;</label>
+                <a href="index.html" class="d-block">Clear</a>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-6 result-container"></div>
+      <div class="col-md-8 marks-container">
+          <style>
+              table.score-table th{
+                  text-align: center;
+              }
+              table.score-table tr:last-child th {
+                  text-align: center;
+              }
+              table.score-table th {
+                  vertical-align: middle;
+              }
+              table.score-table td {
+                  text-align: center;
+                  vertical-align: middle;
+              }
+          </style>
+          <table id="prime1" class="table table-bordered table-strike score-table">
+              <thead class="table-primary">
+                  <tr>
+                      <th style="width:150px;">Subject</th>
+                      <th>Full Marks</th>
+                      <th>Pass Marks</th>
+                      <th>Obtained Marks</th>
+                      <th>Total</th>
+                      <th style="width: 100px;">Remarks</th>
+                  </tr>
+              </thead>
+              <tbody class="table-secondary">
+                  
+              </tbody>
+              <tfoot>
+                  <tr>
+                    <td>Total</td>
+                    <td>
+                      <span class="subject_total"></span>
+                    </td>
+                    <td>
+                      <span class="pass_total"></span>
+                    </td>
+                    <td>
+                      <span class="obtained_total"></span>
+                    </td>
+                    <td>
+                      <span class="total_total"></span>
+                    </td>
+                    <td>
+                      <span class="obtained_percentage"></span>
+                    </td>
+                  </tr>
+                  <tr class="actionRow">
+                      <td colspan="6">
+                          <div class="mt-3">
+                            <a href="javascript:copyToClipboard(location.href);">
+                                <i class="fa fa-share"></i> Share
+                            </a>
+                            <a href="javascript:writeFeedback();" class="ml-3">
+                                <i class="fa fa-comments"></i> Feedback
+                            </a>
+                        </div>
+                      </td>
+                  </tr>
+                  
+              </tfoot>
+          </table>
+      </div>
+    </div>
+    <div class="row mt-5 justify-content-center">
+      <div class="col-md-6 mt-5">
+        <a href="login.html" class="log-in mr-3">Log in</a>
+        <a href="marksheet.html" class="mr-3" onclick="$('.infodob').show(); return false;">View Marksheet</a> 
+        <a href="javascript:;" class="user-name user-det mr-3"></a> 
+        <a href="javascript:;" class="user-det mr-3" onclick="logoutMe()">Log out</a>
+        <a href="adminPanel-students.html" class="user-det float-right text-danger admin-panel">Admin Panel</a>
+      </div>
+      <div class="col-md-10 offset-4">
+          <div class="notifications mt-2">
+              
+          </div>
+      </div>
+    </div>
+  </main>
+
+  
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="./assets/js/colors.js"></script>
+<script src="./assets/js/vendors.bundle.js"></script>
+<!-- <script src="./assets/js/scripts.bundle.js"></script> -->
+<script src="./assets/js/index.js" type="text/javascript"></script>
+
+<script>
+    $(function() {
+        $('#result-check-form').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            const serial_num = $('[name="serial_num"]').val();
+            let dob = false;
+            if($('.infodob').is(':visible')) {
+              dob = $('[name="dob"]').val();
+              location.href = ['index.html', $('#result-check-form').serialize()].join('?')
+            }
+            $('.result-container').empty();
+
+            $.get('http://localhost:5000/api/results/findBySerialNum/'+ serial_num)
+            .then(msg => {
+              if(typeof msg === 'string') {
+                $('.result-container').text(msg)
+              }
+              if(msg && msg.subjects && msg.subjects.length) {
+
+                const tableBody = $('table#prime1 tbody');
+                let subjectbody = '';
+                let subject_total = 0;
+                let pass_total = 0;
+                let obtained_total = 0;
+                let total_total = 0;
+                let obtained_percentage;
+                $.each(msg.subjects, function(rowNumber, subject) {
+                    subjectbody += `<tr data-row="${rowNumber+1}">
+                                    <td>${subject.subject}</td>
+                                    <td>100</td>
+                                    <td>40</td>
+                                    <td>${subject.obtained_marks}</td>
+                                    <td>${subject.total_marks}</td>
+                                    <td>${subject.remarks}</td>
+                                </tr>`;
+                    subject_total += 100;
+                    pass_total += 40;
+                    obtained_total += Number(subject.obtained_marks);
+                    total_total += Number(subject.total_marks);
+                });
+                tableBody.html(subjectbody);
+
+                const table = $('table#prime1');
+                table.find('tfoot tr:first-child .subject_total').text(subject_total);
+                table.find('tfoot tr:first-child .pass_total').text(pass_total);
+                table.find('tfoot tr:first-child .obtained_total').text(obtained_total);
+                table.find('tfoot tr:first-child .total_total').text(total_total);
+                obtained_percentage = obtained_total / subject_total * 100;
+                table.find('tfoot tr:first-child .obtained_percentage').text(obtained_percentage + '%');
+                table.show()
+              }
+            });
+            
+        });
+
+        $('[name="dob"]').datepicker({
+          format: 'yyyy-mm-dd',
+          autoclose:true
+        })
+    })
+</script>
+
+</body>
+</html>

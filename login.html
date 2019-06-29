@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Student Management System</title>
+
+    <!-- <link rel="stylesheet" href="./assets/css/vendors.bundle.css"> -->
+    <!-- <link href="./assets/css/datatables.bundle.css" rel="stylesheet" type="text/css" /> -->
+    <link href="./assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+    <script>
+        WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+</head>
+<body>
+    
+  <main class="container pt-4">
+    <div class="row justify-content-center">
+      <div class="col-sm-12 col-md-6 col-lg-5">
+        <div class="alert alert-danger d-none">
+            <span class="message"></span>
+        </div>
+        <form action="javascript:;" method="post" id="login-form">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="email" class="form-control" autofocus>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control">
+          </div>
+          <div class="form-group">
+            <button class="btn btn-primary"> LOGIN</button>
+            <a href="register.html" class="btn btn-accent float-right">Register</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="./assets/js/colors.js"></script>
+<script src="./assets/js/vendors.bundle.js"></script>
+
+<script>
+    $(function() {
+        $('#login-form').off('submit').on('submit', function(e) {
+            $.post('http://localhost:5000/api/auth/signin', $(this).serializeArray()).then(response => {
+                localStorage.setItem('token', response.token);
+                localStorage.setItem('user_role', response.role);
+                localStorage.setItem('just_login', 'true');
+                location.href = 'index.html#adminPanel-students';
+            }).catch(err => {
+                if(err.status === 400) {
+                    localStorage.setItem('error', err.responseJSON.message);
+                }
+                location.reload();
+            }) 
+        });
+
+        const err_message = localStorage.getItem('error');
+        if(err_message) {
+            $('.alert.alert-danger').removeClass('d-none').find('.message').text(err_message);
+            setTimeout(function() {
+                $('.alert.alert-danger').addClass('d-none');
+            }, 20000);
+            localStorage.removeItem('error');
+        }
+    })
+</script>
+
+</body>
+</html>
